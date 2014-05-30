@@ -2,13 +2,16 @@
 # coding: utf-8
 
 try:
-    from pyPdf import PdfFileWriter, PdfFileReader
-except ImportError as e:
-    raise(e)
+    import warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore",category=DeprecationWarning)
+        from pyPdf import PdfFileWriter, PdfFileReader
+    except ImportError as e:
+        raise(e)
 from optparse import OptionParser
 import types
 
-class PdfWrapper(object):
+class PdfSplit(object):
 
     def __init__(self):
         pass
@@ -45,7 +48,7 @@ class PdfWrapper(object):
                 except:
                     pass
             if isinstance(pages, types.ListType):
-                if self.count(src) < pages[-1] + 1:
+                if self.count(src) < pages[-1]:
                     return "Error: The last page number is greater than last document page"
                 pages = [ x - 1 for x in pages ]
                 [ writer.addPage(reader.getPage(page)) for page in pages ]
@@ -69,7 +72,7 @@ def main():
     parser.add_option("-p", "--pages", dest="pages", help="document pages, ex: -p 1,3,5,7 or -p 10-20")
     (options, args) = parser.parse_args()
 
-    pdf = PdfWrapper()
+    pdf = PdfSplit()
 
     if options.filename is not None and options.count is not None:
         print "The %s file has %s pages" % (options.filename, pdf.count(options.filename))
